@@ -50,7 +50,7 @@ Welcome to ``esc_mini_tools_lib`` Documentation
 .. image:: https://esc-mini-tools-lib.readthedocs.io/en/latest/_static/esc_mini_tools_lib-logo.png
     :target: https://esc-mini-tools-lib.readthedocs.io/en/latest/
 
-Documentation for ``esc_mini_tools_lib``.
+``esc_mini_tools_lib`` is a collection of reusable mini-tools that provides core business logic for multi-platform deployment scenarios. Each tool implements the Command Pattern using Pydantic models, enabling built-in validation, type safety, and easy OpenAPI specification generation. The library is designed to be pip-installed and seamlessly integrated into various applications: as web app endpoints, as AWS Lambda functions for remote capabilities, or as MCP (Model Context Protocol) servers for AI assistants. By extracting core logic into this standalone library, you can deploy the same validated functionality across different platforms without code duplication.
 
 
 .. _install:

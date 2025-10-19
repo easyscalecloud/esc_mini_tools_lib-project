@@ -5,6 +5,10 @@ from esc_mini_tools_lib import api
 
 def test():
     _ = api
+    _ = api.AddUpTwoNumberInput
+    _ = api.AddUpTwoNumberOutput
+    _ = api.ChineseToEnglishPunctuationInput
+    _ = api.ChineseToEnglishPunctuationOutput
 
 
 if __name__ == "__main__":
