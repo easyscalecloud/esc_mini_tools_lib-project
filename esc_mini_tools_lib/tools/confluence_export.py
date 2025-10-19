@@ -9,17 +9,26 @@ to the REST API format for exporting page content.
 
 import typing as T
 import re
+import json
 from enum import Enum
+from functools import cached_property
 from urllib.parse import urlparse, parse_qs
 
 from pydantic import BaseModel, Field
+from atlas_doc_parser.api import NodeDoc
+from docpack.api import ConfluencePage
 
 
+# ------------------------------------------------------------------------------
+# URL converter
+# ------------------------------------------------------------------------------
 class ConfluenceUrlPattern(str, Enum):
     """Enum representing different Confluence URL patterns."""
 
     STANDARD_PAGE = "standard_page"  # /spaces/{space}/pages/{id}/{title}
-    PAGE_WITH_QUERY = "page_with_query"  # /spaces/{space}/pages/{id}/{title}?param=value
+    PAGE_WITH_QUERY = (
+        "page_with_query"  # /spaces/{space}/pages/{id}/{title}?param=value
+    )
     EDIT_PAGE = "edit_page"  # /spaces/{space}/pages/edit-v2/{id}
     DRAFT_PAGE = "draft_page"  # /pages/resumedraft.action?draftId={id}
     UNKNOWN = "unknown"
@@ -200,15 +209,61 @@ class ConfluenceUrlTransformInput(BaseModel):
 class ConfluenceUrlTransformOutput(BaseModel):
     """Output model for Confluence URL transformation."""
 
-    input: ConfluenceUrlTransformInput = Field(
-        description="The original input"
-    )
-    pattern: ConfluenceUrlPattern = Field(
-        description="The identified URL pattern type"
-    )
+    input: ConfluenceUrlTransformInput = Field(description="The original input")
+    pattern: ConfluenceUrlPattern = Field(description="The identified URL pattern type")
     api_url: str | None = Field(
         description="The transformed REST API URL, or None if transformation failed"
     )
-    success: bool = Field(
-        description="Whether the transformation was successful"
-    )
+    success: bool = Field(description="Whether the transformation was successful")
+
+
+# ------------------------------------------------------------------------------
+# API response to markdown
+# ------------------------------------------------------------------------------
+def get_body_in_atlas_doc_format_from_page_data(
+    page_data: dict[str, T.Any],
+) -> dict[str, T.Any]:
+    return json.loads(page_data["body"]["atlas_doc_format"]["value"])
+
+
+class Record(BaseModel):
+    url: str = Field()
+    page_data: dict[str, T.Any] = Field()
+    xml: str | None = Field(default=None)
+    success: bool = Field(default=False)
+
+    @cached_property
+    def conf_page(self) -> "ConfluencePage":
+        return ConfluencePage(
+            page_data=self.page_data,
+            site_url="",
+            id_path="",
+            position_path="",
+            breadcrumb_path="",
+        )
+
+
+class ConfluencePageExportInput(BaseModel):
+    records: list[Record] = Field()
+    wanted_fields: list[str] | None = (Field(default=None),)
+
+    def main(self):
+        docs = list()
+        for record in self.records:
+            try:
+                xml = record.conf_page.to_xml()
+                docs.append(xml)
+                record.xml = xml
+                record.success = True
+            except Exception as e:
+                pass
+        text = "\n".join(docs)
+        return ConfluencePageExportOutput(
+            input=self,
+            text=text,
+        )
+
+
+class ConfluencePageExportOutput(BaseModel):
+    input: ConfluencePageExportInput = Field()
+    text: str = Field()
