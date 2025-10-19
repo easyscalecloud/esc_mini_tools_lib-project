@@ -206,7 +206,7 @@ class ConfluenceUrlTransformOutput(BaseModel):
     pattern: ConfluenceUrlPattern = Field(
         description="The identified URL pattern type"
     )
-    api_url: Optional[str] = Field(
+    api_url: str | None = Field(
         description="The transformed REST API URL, or None if transformation failed"
     )
     success: bool = Field(
