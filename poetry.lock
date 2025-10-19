@@ -43,6 +43,22 @@ astroid = ["astroid (>=2,<4)"]
 test = ["astroid (>=2,<4)", "pytest", "pytest-cov", "pytest-xdist"]
 
 [[package]]
+name = "atlas-doc-parser"
+version = "0.1.2"
+description = "Package short description."
+optional = false
+python-versions = ">=3.8"
+groups = ["main"]
+files = [
+    {file = "atlas_doc_parser-0.1.2-py3-none-any.whl", hash = "sha256:f631c2326f352c42d5d8050bc4786e5b55c1fccaedd90186e9a2f93e3bdabb56"},
+    {file = "atlas_doc_parser-0.1.2.tar.gz", hash = "sha256:09c97ffd1a8c5dc129c5da9cd21beb08f5216d574d9591152cbbea8c640f55d8"},
+]
+
+[package.extras]
+docs = ["Sphinx (==5.3.0)", "docfly (==2.0.3)", "furo (==2023.03.27)", "ipython (==8.10.0)", "nbsphinx (==0.8.12)", "pygments (==2.15.1)", "rstobj (==1.2.1)", "sphinx-copybutton (==0.5.1)", "sphinx-design (==0.5.0)", "sphinx-jinja (==2.0.2)"]
+tests = ["beautifulsoup4", "diskcache", "pyatlassian", "pytest", "pytest-cov", "requests", "rich"]
+
+[[package]]
 name = "attrs"
 version = "25.3.0"
 description = "Classes Without Boilerplate"
@@ -226,10 +242,7 @@ files = [
 [package.dependencies]
 jmespath = ">=0.7.1,<2.0.0"
 python-dateutil = ">=2.1,<3.0.0"
-urllib3 = [
-    {version = ">=1.25.4,<1.27", markers = "python_version < \"3.10\""},
-    {version = ">=1.25.4,<2.2.0 || >2.2.0,<3", markers = "python_version >= \"3.10\""},
-]
+urllib3 = {version = ">=1.25.4,<2.2.0 || >2.2.0,<3", markers = "python_version >= \"3.10\""}
 
 [package.extras]
 crt = ["awscrt (==0.27.6)"]
@@ -265,10 +278,9 @@ virtualenv = ["virtualenv (>=20.0.35)"]
 name = "certifi"
 version = "2025.1.31"
 description = "Python package for providing Mozilla's CA Bundle."
-optional = true
+optional = false
 python-versions = ">=3.6"
 groups = ["main"]
-markers = "extra == \"dev\" or extra == \"doc\""
 files = [
     {file = "certifi-2025.1.31-py3-none-any.whl", hash = "sha256:ca78db4565a652026a4db2bcdf68f2fb589ea80d0be70e03929ed730746b84fe"},
     {file = "certifi-2025.1.31.tar.gz", hash = "sha256:3d5da6925056f6f18f119200434a4780a94263f10d1c21d032a6f6b2baa20651"},
@@ -359,10 +371,9 @@ pycparser = "*"
 name = "charset-normalizer"
 version = "3.4.1"
 description = "The Real First Universal Charset Detector. Open, modern and actively maintained alternative to Chardet."
-optional = true
+optional = false
 python-versions = ">=3.7"
 groups = ["main"]
-markers = "extra == \"dev\" or extra == \"doc\""
 files = [
     {file = "charset_normalizer-3.4.1-cp310-cp310-macosx_10_9_universal2.whl", hash = "sha256:91b36a978b5ae0ee86c394f5a54d6ef44db1de0815eb43de826d41d21e4af3de"},
     {file = "charset_normalizer-3.4.1-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:7461baadb4dc00fd9e0acbe254e3d7d2112e7f92ced2adc96e54ef6501c5f176"},
@@ -629,6 +640,18 @@ files = [
 ]
 
 [[package]]
+name = "diskcache"
+version = "5.6.3"
+description = "Disk Cache -- Disk and file backed persistent cache."
+optional = false
+python-versions = ">=3"
+groups = ["main"]
+files = [
+    {file = "diskcache-5.6.3-py3-none-any.whl", hash = "sha256:5e31b2d5fbad117cc363ebaf6b689474db18a1f6438bc82358b024abd4c2ca19"},
+    {file = "diskcache-5.6.3.tar.gz", hash = "sha256:2c3a3fa2743d8535d832ec61c2054a1641f41775aa7c556758a109941e33e4fc"},
+]
+
+[[package]]
 name = "docfly"
 version = "3.0.0"
 description = "A utility tool to help you build better sphinx documents."
@@ -650,6 +673,30 @@ Sphinx = "*"
 dev = ["build (>=1.2.1,<2.0.0)", "rich (>=13.8.1,<14.0.0)", "twine (>=6.0.0,<7.0.0)", "wheel (>=0.45.0,<1.0.0)"]
 doc = ["Sphinx (>=7.4.7,<8.0.0)", "furo (==2024.8.6)", "ipython (>=8.18.1,<8.19.0)", "nbsphinx (>=0.8.12,<1.0.0)", "pygments (>=2.18.0,<3.0.0)", "rstobj (==1.2.1)", "sphinx-copybutton (>=0.5.2,<1.0.0)", "sphinx-design (>=0.6.1,<1.0.0)", "sphinx-jinja (>=2.0.2,<3.0.0)"]
 test = ["pytest (>=8.2.2,<9.0.0)", "pytest-cov (>=6.0.0,<7.0.0)"]
+
+[[package]]
+name = "docpack"
+version = "0.1.4"
+description = "DocPack efficiently consolidates documentation from GitHub, Confluence, and files into a structured knowledge base for AI access."
+optional = false
+python-versions = "<4.0,>=3.10"
+groups = ["main"]
+files = [
+    {file = "docpack-0.1.4-py3-none-any.whl", hash = "sha256:278886e1ec31db7091df5a9cef340df6d641d9359498afbb52cd72f9a1940b0d"},
+    {file = "docpack-0.1.4.tar.gz", hash = "sha256:23f310878c220a35b4f3ccd7a7ee1c33b8a9c7f0c7ce7f360380081759f18ee0"},
+]
+
+[package.dependencies]
+atlas_doc_parser = ">=0.1.2,<1.0.0"
+diskcache = ">=5.6.3,<6.0.0"
+pathpick = ">=0.1.1,<1.0.0"
+pyatlassian = ">=0.3.2,<1.0.0"
+pydantic = ">=2.9.2,<3.0.0"
+
+[package.extras]
+dev = ["build (>=1.2.1,<2.0.0)", "rich (>=13.8.1,<14.0.0)", "twine (>=6.0.0,<7.0.0)", "wheel (>=0.45.0,<1.0.0)"]
+doc = ["Sphinx (>=7.4.7,<8.0.0)", "docfly (==3.0.0)", "furo (==2024.8.6)", "ipython (>=8.18.1,<8.19.0)", "nbsphinx (>=0.8.12,<1.0.0)", "pygments (>=2.18.0,<3.0.0)", "rstobj (==1.2.1)", "sphinx-copybutton (>=0.5.2,<1.0.0)", "sphinx-design (>=0.6.1,<1.0.0)", "sphinx-jinja (>=2.0.2,<3.0.0)"]
+test = ["home_secret (>=0.1.3,<1.0.0)", "pytest (>=8.2.2,<9.0.0)", "pytest-cov (>=6.0.0,<7.0.0)"]
 
 [[package]]
 name = "docutils"
@@ -773,10 +820,9 @@ test = ["coverage[toml]", "pretend", "pytest", "pytest-cov"]
 name = "idna"
 version = "3.10"
 description = "Internationalized Domain Names in Applications (IDNA)"
-optional = true
+optional = false
 python-versions = ">=3.6"
 groups = ["main"]
-markers = "extra == \"dev\" or extra == \"doc\""
 files = [
     {file = "idna-3.10-py3-none-any.whl", hash = "sha256:946d195a0d259cbba61165e88e65941f16e9b36ea6ddb97f00452bae8b1287d3"},
     {file = "idna-3.10.tar.gz", hash = "sha256:12f65c9b470abda6dc35cf8e63cc574b1c52b11df2c86030af0ac09b01b13ea9"},
@@ -805,7 +851,7 @@ description = "Read metadata from Python packages"
 optional = true
 python-versions = ">=3.9"
 groups = ["main"]
-markers = "(python_version < \"3.10\" or extra == \"dev\") and (python_full_version < \"3.10.2\" or platform_machine != \"ppc64le\" and platform_machine != \"s390x\") and python_version < \"3.12\" and (extra == \"dev\" or extra == \"doc\")"
+markers = "extra == \"dev\" and (platform_machine != \"ppc64le\" and platform_machine != \"s390x\" or python_full_version < \"3.10.2\") and python_version < \"3.12\""
 files = [
     {file = "importlib_metadata-8.6.1-py3-none-any.whl", hash = "sha256:02a89390c1e15fdfdc0d7c6b25cb3e62650d0494005c97d6f148bf5b9787525e"},
     {file = "importlib_metadata-8.6.1.tar.gz", hash = "sha256:310b41d755445d74569f993ccfc22838295d9fe005425094fad953d7f15c8580"},
@@ -860,7 +906,6 @@ prompt-toolkit = ">=3.0.41,<3.1.0"
 pygments = ">=2.4.0"
 stack-data = "*"
 traitlets = ">=5"
-typing-extensions = {version = "*", markers = "python_version < \"3.10\""}
 
 [package.extras]
 all = ["black", "curio", "docrepr", "exceptiongroup", "ipykernel", "ipyparallel", "ipywidgets", "matplotlib", "matplotlib (!=3.2.0)", "nbconvert", "nbformat", "notebook", "numpy (>=1.22)", "pandas", "pickleshare", "pytest (<7)", "pytest (<7.1)", "pytest-asyncio (<0.22)", "qtconsole", "setuptools (>=18.5)", "sphinx (>=1.3)", "sphinx-rtd-theme", "stack-data", "testpath", "trio", "typing-extensions"]
@@ -1077,7 +1122,6 @@ files = [
 ]
 
 [package.dependencies]
-importlib-metadata = {version = ">=4.8.3", markers = "python_version < \"3.10\""}
 jupyter-core = ">=4.12,<5.0.dev0 || >=5.1.dev0"
 python-dateutil = ">=2.8.2"
 pyzmq = ">=23.0"
@@ -1351,7 +1395,6 @@ files = [
 beautifulsoup4 = "*"
 bleach = {version = "!=5.0.0", extras = ["css"]}
 defusedxml = "*"
-importlib-metadata = {version = ">=3.6", markers = "python_version < \"3.10\""}
 jinja2 = ">=3.0"
 jupyter-core = ">=4.7"
 jupyterlab-pygments = "*"
@@ -1512,6 +1555,38 @@ docs = ["Sphinx (==5.3.0)", "docfly (==2.0.1)", "furo (==2023.03.27)", "ipython 
 tests = ["autopep8", "pytest", "pytest-cov"]
 
 [[package]]
+name = "pathpick"
+version = "0.1.1"
+description = "A lightweight Python library for selecting files using gitignore-style include and exclude patterns."
+optional = false
+python-versions = "<4.0,>=3.9"
+groups = ["main"]
+files = [
+    {file = "pathpick-0.1.1-py3-none-any.whl", hash = "sha256:b1ef3437658d950da836d1aa5a672a27f0abc2f0e35c0c34e4d99f08f8c8f8fc"},
+    {file = "pathpick-0.1.1.tar.gz", hash = "sha256:ce617cb2bb8135208dc1df8c4fa82fcccdf11ec08130d9b8e92cf41dc63dfb6b"},
+]
+
+[package.dependencies]
+pathspec = ">=0.12.1,<1.0.0"
+
+[package.extras]
+dev = ["build (>=1.2.1,<2.0.0)", "rich (>=13.8.1,<14.0.0)", "twine (>=6.0.0,<7.0.0)", "wheel (>=0.45.0,<1.0.0)"]
+doc = ["Sphinx (>=7.4.7,<8.0.0)", "docfly (==2.0.3)", "furo (==2024.8.6)", "ipython (>=8.18.1,<8.19.0)", "nbsphinx (>=0.8.12,<1.0.0)", "pygments (>=2.18.0,<3.0.0)", "rstobj (==1.2.1)", "sphinx-copybutton (>=0.5.2,<1.0.0)", "sphinx-design (>=0.6.1,<1.0.0)", "sphinx-jinja (>=2.0.2,<3.0.0)"]
+test = ["pytest (>=8.2.2,<9.0.0)", "pytest-cov (>=6.0.0,<7.0.0)"]
+
+[[package]]
+name = "pathspec"
+version = "0.12.1"
+description = "Utility library for gitignore style pattern matching of file paths."
+optional = false
+python-versions = ">=3.8"
+groups = ["main"]
+files = [
+    {file = "pathspec-0.12.1-py3-none-any.whl", hash = "sha256:a0d503e138a4c123b27490a4f7beda6a01c6f288df0e4a8b79c7eb0dc7b4cc08"},
+    {file = "pathspec-0.12.1.tar.gz", hash = "sha256:a482d51503a1ab33b1c67a6c3813a26953dbdc71c31dacaef9a838c4e29f5712"},
+]
+
+[[package]]
 name = "pexpect"
 version = "4.9.0"
 description = "Pexpect allows easy control of interactive console applications."
@@ -1606,6 +1681,25 @@ files = [
 
 [package.extras]
 tests = ["pytest"]
+
+[[package]]
+name = "pyatlassian"
+version = "0.3.2"
+description = "Modern, Pythonic interface for Atlassian's REST APIs, designed specifically for cloud-based Atlassian products."
+optional = false
+python-versions = ">=3.9"
+groups = ["main"]
+files = [
+    {file = "pyatlassian-0.3.2-py3-none-any.whl", hash = "sha256:e10878227f7a242b082064eec6a06958e52cf569cbce11ad4bd430a19f7175a8"},
+    {file = "pyatlassian-0.3.2.tar.gz", hash = "sha256:7b618f9d587a2389f225d92f70d3479f0a61542d0088e966dab6f3ed1d2c669b"},
+]
+
+[package.dependencies]
+requests = ">=2.31.0,<3.0.0"
+
+[package.extras]
+docs = ["Sphinx (==5.3.0)", "docfly (==2.0.3)", "furo (==2023.03.27)", "ipython (==8.10.0)", "nbsphinx (==0.8.12)", "pygments (==2.15.1)", "rstobj (==1.2.1)", "sphinx-copybutton (==0.5.1)", "sphinx-design (==0.5.0)", "sphinx-jinja (==2.0.2)"]
+tests = ["pytest", "pytest-cov"]
 
 [[package]]
 name = "pycparser"
@@ -2050,10 +2144,9 @@ typing-extensions = {version = ">=4.4.0", markers = "python_version < \"3.13\""}
 name = "requests"
 version = "2.32.3"
 description = "Python HTTP for Humans."
-optional = true
+optional = false
 python-versions = ">=3.8"
 groups = ["main"]
-markers = "extra == \"dev\" or extra == \"doc\""
 files = [
     {file = "requests-2.32.3-py3-none-any.whl", hash = "sha256:70761cfe03c773ceb22aa2f671b4757976145175cdfca038c02654d061d6dcc6"},
     {file = "requests-2.32.3.tar.gz", hash = "sha256:55365417734eb18255590a9ff9eb97e9e1da868d4ccd6402399eaf68af20a760"},
@@ -2430,7 +2523,6 @@ babel = ">=2.13"
 colorama = {version = ">=0.4.6", markers = "sys_platform == \"win32\""}
 docutils = ">=0.20,<0.22"
 imagesize = ">=1.3"
-importlib-metadata = {version = ">=6.0", markers = "python_version < \"3.10\""}
 Jinja2 = ">=3.1"
 packaging = ">=23.0"
 Pygments = ">=2.17"
@@ -2777,7 +2869,6 @@ files = [
 
 [package.dependencies]
 id = "*"
-importlib-metadata = {version = ">=3.6", markers = "python_version < \"3.10\""}
 keyring = {version = ">=15.1", markers = "platform_machine != \"ppc64le\" and platform_machine != \"s390x\""}
 packaging = ">=24.0"
 readme-renderer = ">=35.0"
@@ -2819,30 +2910,11 @@ typing-extensions = ">=4.12.0"
 
 [[package]]
 name = "urllib3"
-version = "1.26.20"
-description = "HTTP library with thread-safe connection pooling, file post, and more."
-optional = false
-python-versions = "!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,!=3.4.*,!=3.5.*,>=2.7"
-groups = ["main"]
-markers = "python_version < \"3.10\""
-files = [
-    {file = "urllib3-1.26.20-py2.py3-none-any.whl", hash = "sha256:0ed14ccfbf1c30a9072c7ca157e4319b70d65f623e91e7b32fadb2853431016e"},
-    {file = "urllib3-1.26.20.tar.gz", hash = "sha256:40c2dc0c681e47eb8f90e7e27bf6ff7df2e677421fd46756da1161c39ca70d32"},
-]
-
-[package.extras]
-brotli = ["brotli (==1.0.9) ; os_name != \"nt\" and python_version < \"3\" and platform_python_implementation == \"CPython\"", "brotli (>=1.0.9) ; python_version >= \"3\" and platform_python_implementation == \"CPython\"", "brotlicffi (>=0.8.0) ; (os_name != \"nt\" or python_version >= \"3\") and platform_python_implementation != \"CPython\"", "brotlipy (>=0.6.0) ; os_name == \"nt\" and python_version < \"3\""]
-secure = ["certifi", "cryptography (>=1.3.4)", "idna (>=2.0.0)", "ipaddress ; python_version == \"2.7\"", "pyOpenSSL (>=0.14)", "urllib3-secure-extra"]
-socks = ["PySocks (>=1.5.6,!=1.5.7,<2.0)"]
-
-[[package]]
-name = "urllib3"
 version = "2.3.0"
 description = "HTTP library with thread-safe connection pooling, file post, and more."
 optional = false
 python-versions = ">=3.9"
 groups = ["main"]
-markers = "python_version >= \"3.10\""
 files = [
     {file = "urllib3-2.3.0-py3-none-any.whl", hash = "sha256:1cee9ad369867bfdbbb48b7dd50374c0967a0bb7710050facf0dd6911440e3df"},
     {file = "urllib3-2.3.0.tar.gz", hash = "sha256:f8c5449b3cf0861679ce7e0503c7b44b5ec981bec0d1d3795a07f1ba96f0204d"},
@@ -3010,7 +3082,7 @@ description = "Backport of pathlib-compatible object wrapper for zip files"
 optional = true
 python-versions = ">=3.9"
 groups = ["main"]
-markers = "(python_version < \"3.10\" or extra == \"dev\") and (python_full_version < \"3.10.2\" or platform_machine != \"ppc64le\" and platform_machine != \"s390x\") and python_version < \"3.12\" and (extra == \"dev\" or extra == \"doc\")"
+markers = "extra == \"dev\" and (platform_machine != \"ppc64le\" and platform_machine != \"s390x\" or python_full_version < \"3.10.2\") and python_version < \"3.12\""
 files = [
     {file = "zipp-3.21.0-py3-none-any.whl", hash = "sha256:ac1bbe05fd2991f160ebce24ffbac5f6d11d83dc90891255885223d42b3cd931"},
     {file = "zipp-3.21.0.tar.gz", hash = "sha256:2c9958f6430a2040341a52eb608ed6dd93ef4392e02ffe219417c1b28b5dd1f4"},
@@ -3032,5 +3104,5 @@ test = ["pytest", "pytest-cov"]
 
 [metadata]
 lock-version = "2.1"
-python-versions = ">=3.9,<4.0"
-content-hash = "7b93e078667a70190e2fb5704ac9ed276bee5eaa80e9b4541d64a1ae4f82116e"
+python-versions = ">=3.10,<4.0"
+content-hash = "d9553d1885825b9ffbe821827dfdb20b9223e63dfc82083a84d18c81d56f6592"
