@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from pydantic import BaseModel, Field
 from pathlib import Path
 
 dir_here = Path(__file__).absolute().parent
@@ -225,7 +226,17 @@ def process(text: str) -> str:
     return "\n".join(new_lines)
 
 
-if __name__ == "__main__":
-    text = p_input.read_text()
-    text = process(text)
-    p_output.write_text(text)
+class ChineseToEnglishPunctuationInput(BaseModel):  # pragma: no cover
+    text: str = Field()
+
+    def main(self):
+        result = process(self.text)
+        return ChineseToEnglishPunctuationOutput(
+            input=self,
+            result=result,
+        )
+
+
+class ChineseToEnglishPunctuationOutput(BaseModel):  # pragma: no cover
+    input: ChineseToEnglishPunctuationInput = Field()
+    result: str = Field()
