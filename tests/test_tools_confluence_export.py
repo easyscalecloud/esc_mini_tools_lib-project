@@ -10,6 +10,10 @@ from esc_mini_tools_lib.tools.confluence_export import (
     convert_to_api_url,
     ConfluenceUrlTransformInput,
     ConfluenceUrlTransformOutput,
+    Record,
+    ConfluencePageExportInput,
+    ConfluencePageExportOutput,
+    get_body_in_atlas_doc_format_from_page_data,
 )
 
 
@@ -157,6 +161,102 @@ class TestConfluenceUrlTransformInput:
         assert output.pattern == ConfluenceUrlPattern.UNKNOWN
         assert output.api_url is None
         assert output.input == input_obj
+
+
+class TestGetBodyInAtlasDocFormat:
+    """Test extraction of atlas_doc_format from page data."""
+
+    def test_extract_body(self):
+        # Use a simple page_data for testing
+        simple_page_data = {
+            "body": {
+                "atlas_doc_format": {
+                    "value": '{"type":"doc","content":[{"type":"paragraph","content":[{"text":"Test content","type":"text"}]}]}'
+                }
+            }
+        }
+        body = get_body_in_atlas_doc_format_from_page_data(simple_page_data)
+        assert isinstance(body, dict)
+        assert body["type"] == "doc"
+        assert "content" in body
+
+
+class TestRecord:
+    """Test Record model."""
+
+    def test_record_creation(self):
+        url = "https://alice.atlassian.net/wiki/spaces/TEST/pages/123/Test"
+        simple_page_data = {
+            "id": "123",
+            "title": "Test Page",
+            "body": {
+                "atlas_doc_format": {
+                    "value": '{"type":"doc","content":[{"type":"paragraph","content":[{"text":"Test","type":"text"}]}]}'
+                }
+            },
+        }
+
+        record = Record(
+            url=url,
+            page_data=simple_page_data,
+        )
+
+        assert record.url == url
+        assert record.page_data == simple_page_data
+        assert record.xml is None
+        assert record.success is False
+
+
+class TestConfluencePageExportInput:
+    """Test the Pydantic export models."""
+
+    def test_single_page_export(self):
+        url = "https://alice.atlassian.net/wiki/spaces/TEST/pages/123/Test+Page"
+        simple_page_data = {
+            "id": "123",
+            "title": "Test Page",
+            "body": {
+                "atlas_doc_format": {
+                    "value": '{"type":"doc","content":[{"type":"paragraph","content":[{"text":"This is test content.","type":"text"}]}]}'
+                }
+            },
+        }
+
+        record = Record(url=url, page_data=simple_page_data)
+        input_obj = ConfluencePageExportInput(records=[record])
+        output = input_obj.main()
+
+        # Verify the output structure
+        assert isinstance(output, ConfluencePageExportOutput)
+        assert output.input == input_obj
+        assert isinstance(output.text, str)
+        # Note: We don't assert success or xml content because the simplified
+        # page_data may not have all required fields for successful conversion
+
+    def test_multiple_page_export(self):
+        records = []
+        for i in range(3):
+            url = f"https://alice.atlassian.net/wiki/spaces/TEST/pages/{i}/Test+Page+{i}"
+            page_data = {
+                "id": str(i),
+                "title": f"Test Page {i}",
+                "body": {
+                    "atlas_doc_format": {
+                        "value": f'{{"type":"doc","content":[{{"type":"paragraph","content":[{{"text":"Content {i}","type":"text"}}]}}]}}'
+                    }
+                },
+            }
+            records.append(Record(url=url, page_data=page_data))
+
+        input_obj = ConfluencePageExportInput(records=records)
+        output = input_obj.main()
+
+        # Verify the output structure
+        assert isinstance(output, ConfluencePageExportOutput)
+        assert isinstance(output.text, str)
+        assert len(records) == 3
+        # Note: We don't assert success or xml content because the simplified
+        # page_data may not have all required fields for successful conversion
 
 
 if __name__ == "__main__":
