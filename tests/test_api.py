@@ -9,6 +9,12 @@ def test():
     _ = api.AddUpTwoNumberOutput
     _ = api.ChineseToEnglishPunctuationInput
     _ = api.ChineseToEnglishPunctuationOutput
+    _ = api.ConfluenceUrlTransformInput
+    _ = api.ConfluenceUrlTransformOutput
+    _ = api.ConfluencePageExportInput
+    _ = api.ConfluencePageExportOutput
+    _ = api.CountLlmTokenInput
+    _ = api.CountLlmTokenOutput
 
 
 if __name__ == "__main__":
