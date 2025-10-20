@@ -15,6 +15,17 @@ x.y.z (Backlog)
 **Miscellaneous**
 
 
+0.1.5 (2025-10-20)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+**Features and Improvements**
+
+- Add ``count_llm_token`` tool for counting tokens in text using tiktoken (gpt-4o encoding).
+
+**Minor Improvements**
+
+- Add comprehensive unit tests for ``count_llm_token`` tool with 100% code coverage.
+
+
 0.1.4 (2025-10-19)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 **Minor Improvements**
