@@ -229,6 +229,7 @@ def get_body_in_atlas_doc_format_from_page_data(
 class Record(BaseModel):
     url: str = Field()
     page_data: dict[str, T.Any] = Field()
+    md: str | None = Field(default=None)
     xml: str | None = Field(default=None)
     success: bool = Field(default=False)
 
@@ -251,8 +252,10 @@ class ConfluencePageExportInput(BaseModel):
         docs = list()
         for record in self.records:
             try:
+                md = record.conf_page.markdown
                 xml = record.conf_page.to_xml()
                 docs.append(xml)
+                record.md = md
                 record.xml = xml
                 record.success = True
             except Exception as e:
