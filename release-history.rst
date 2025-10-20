@@ -15,6 +15,14 @@ x.y.z (Backlog)
 **Miscellaneous**
 
 
+0.1.4 (2025-10-19)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+**Minor Improvements**
+
+- Add optional ``md`` field to ``Record`` model in ``confluence_export`` tool to store markdown content.
+- Update ``ConfluencePageExportInput`` export logic to populate markdown field during export.
+
+
 0.1.3 (2025-10-19)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 **Bugfixes**
