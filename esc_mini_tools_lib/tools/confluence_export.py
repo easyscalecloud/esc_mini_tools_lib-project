@@ -245,7 +245,7 @@ class Record(BaseModel):
 
 class ConfluencePageExportInput(BaseModel):
     records: list[Record] = Field()
-    wanted_fields: list[str] | None = (Field(default=None),)
+    wanted_fields: list[str] | None = Field(default=None)
 
     def main(self):
         docs = list()
