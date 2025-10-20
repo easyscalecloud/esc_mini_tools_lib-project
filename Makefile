@@ -147,7 +147,7 @@ build: ## 🏗 Build Python wheel and source distribution packages
 	~/.pyenv/shims/python ./bin/g5_t1_s1_build_package.py
 
 
-publish: build ## ⭐ Build and publish package to AWS CodeArtifact
+publish: build ## ⭐ Build and publish package to PyPI
 	~/.pyenv/shims/python ./bin/g5_t2_s1_publish_package.py
 
 
