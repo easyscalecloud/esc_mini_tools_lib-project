@@ -15,7 +15,6 @@ from functools import cached_property
 from urllib.parse import urlparse, parse_qs
 
 from pydantic import BaseModel, Field
-from atlas_doc_parser.api import NodeDoc
 from docpack.api import ConfluencePage
 
 
