@@ -676,14 +676,14 @@ test = ["pytest (>=8.2.2,<9.0.0)", "pytest-cov (>=6.0.0,<7.0.0)"]
 
 [[package]]
 name = "docpack"
-version = "0.1.5"
+version = "0.1.6"
 description = "DocPack efficiently consolidates documentation from GitHub, Confluence, and files into a structured knowledge base for AI access."
 optional = false
 python-versions = "<4.0,>=3.10"
 groups = ["main"]
 files = [
-    {file = "docpack-0.1.5-py3-none-any.whl", hash = "sha256:d9f66c5d2491e91b9c49244ad2748567683ecc9747f7fae82865db9910d0bace"},
-    {file = "docpack-0.1.5.tar.gz", hash = "sha256:5946da64f6d23cb139841fd3964fd58c26b14999be6df2af40ee0d34095a3e4f"},
+    {file = "docpack-0.1.6-py3-none-any.whl", hash = "sha256:a71c8a5570388f19893e4b4e5a4402b0e3e2eb8186a2e3a27de4b3642cfbb248"},
+    {file = "docpack-0.1.6.tar.gz", hash = "sha256:7c2da0317dd7e12f704a1ec3cbd653ab3957ca7fe74cd38f26207e2715bb0dd9"},
 ]
 
 [package.dependencies]
@@ -3304,4 +3304,4 @@ test = ["pytest", "pytest-cov"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.10,<4.0"
-content-hash = "218431feaf1bd2c4f82a7057982ee3ef56503f87e39bfe7f4982da7200f6915d"
+content-hash = "61721a3265b78e8ba82a54c0fec87fdad08599933e4e651638e90e429fe67841"
