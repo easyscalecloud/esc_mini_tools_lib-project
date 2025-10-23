@@ -290,16 +290,29 @@ def handle_you_shuang_yin_hao(line: str) -> str:
 
 def handle_space_between_chinese_and_english(line: str) -> str:
     """
-    Add space between Chinese and English characters/numbers.
+    Add space between Chinese and English characters/numbers/punctuation.
     Goes through character by character and maintains two consecutive characters.
-    If one is an English letter/number (a-z, A-Z, 0-9) and the other is non-ASCII, add space between them.
-    Also adds space between English letters and numbers.
+    If one is an ASCII character (a-z, A-Z, 0-9, or certain ASCII punctuation) and the other is non-ASCII, add space between them.
+
+    Special rules:
+    - Closing punctuation (,.!?;:)) should NOT have space before them
+    - Opening punctuation (([{"') should NOT have space after them
+    - Closing quotes (determined by context) can have space after them
     """
     if not line:
         return line
 
     result = []
     prev_char = None
+
+    # Punctuation that should stay close to preceding text (no space before)
+    closing_punctuation = ",.!?;:)]}"
+    # Punctuation that should stay close to following text (no space after)
+    # This includes opening brackets and left quotes
+    opening_punctuation = "([{\""
+
+    # Track whether we're inside quotes (simple toggle)
+    inside_quotes = False
 
     for current_char in line:
         # Check if we need to add space between prev_char and current_char
@@ -311,22 +324,70 @@ def handle_space_between_chinese_and_english(line: str) -> str:
             current_is_number = current_char.isdigit()
             prev_is_non_ascii = ord(prev_char) >= 128
             current_is_non_ascii = ord(current_char) >= 128
+            # Check for ASCII punctuation (excluding space and common separators)
+            prev_is_ascii_punct = ord(prev_char) < 128 and not prev_char.isalnum() and prev_char not in " \t\n"
+            current_is_closing_punct = current_char in closing_punctuation
+
+            # Special handling for quotes: check if previous quote is a closing quote
+            # A quote is closing if it comes after alphanumeric characters or non-ASCII chars
+            prev_is_closing_quote = (prev_char == '"' and
+                                    len(result) >= 2 and
+                                    (result[-2].isalnum() or ord(result[-2]) >= 128))
+
+            # Check if current char is a quote and determine if it's opening or closing
+            # Use quote state tracking: if we're not inside quotes, it's opening; otherwise closing
+            if current_char == '"':
+                current_is_opening_quote = not inside_quotes
+                current_is_closing_quote_char = inside_quotes
+            else:
+                current_is_opening_quote = False
+                current_is_closing_quote_char = False
+
+            # Opening punctuation, but exclude closing quotes
+            # Note: quotes in opening_punctuation are treated as opening ONLY when followed by content
+            prev_is_opening_punct = prev_char in opening_punctuation and not prev_is_closing_quote
 
             # Add space in the following cases:
-            if (
-                # 1. Between English letter and non-ASCII character, example: "Eng中文"
-                (prev_is_english and current_is_non_ascii)
-                # 2. Between non-ASCII character and English letter, example: "中文Eng"
-                or (prev_is_non_ascii and current_is_english)
-                # 3. Between number and non-ASCII character, example: "100中文"
-                or (prev_is_number and current_is_non_ascii)
-                # 4. Between non-ASCII character and number, example: "中文100"
-                or (prev_is_non_ascii and current_is_number)
-            ):
+            should_add_space = False
+
+            # 1. Between English letter and non-ASCII character, example: "Eng中文"
+            if prev_is_english and current_is_non_ascii:
+                should_add_space = True
+            # 2. Between non-ASCII character and English letter, example: "中文Eng"
+            # BUT NOT after opening punctuation/quotes
+            elif prev_is_non_ascii and current_is_english and not prev_is_opening_punct:
+                should_add_space = True
+            # 3. Between number and non-ASCII character, example: "100中文"
+            elif prev_is_number and current_is_non_ascii:
+                should_add_space = True
+            # 4. Between non-ASCII character and number, example: "中文100"
+            # BUT NOT after opening punctuation/quotes
+            elif prev_is_non_ascii and current_is_number and not prev_is_opening_punct:
+                should_add_space = True
+            # 5. Between ASCII punctuation and non-ASCII character
+            # BUT NOT after opening punctuation like ( or opening quotes
+            elif prev_is_ascii_punct and current_is_non_ascii and not prev_is_opening_punct:
+                should_add_space = True
+            # 6. Between non-ASCII character and ASCII letter
+            # Example: '中文A' should add space
+            # BUT NOT before opening quotes
+            elif prev_is_non_ascii and prev_char not in " " and current_char.isalpha() and ord(current_char) < 128 and not current_is_opening_quote:
+                should_add_space = True
+            # 7. Between non-ASCII character and opening quote, example: '从"' -> '从 "'
+            elif prev_is_non_ascii and current_is_opening_quote:
+                should_add_space = True
+
+            # Actually add the space if conditions met
+            # Don't add before closing punctuation or closing quotes
+            if should_add_space and not current_is_closing_punct and not current_is_closing_quote_char:
                 result.append(" ")
 
         result.append(current_char)
         prev_char = current_char
+
+        # Update quote state
+        if current_char == '"':
+            inside_quotes = not inside_quotes
 
     return "".join(result)
 
