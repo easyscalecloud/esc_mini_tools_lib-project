@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from dataclasses import dataclass
 from pydantic import BaseModel, Field
 from pathlib import Path
 
@@ -7,7 +8,134 @@ dir_here = Path(__file__).absolute().parent
 p_input = dir_here / "input.txt"
 p_output = dir_here / "output.txt"
 
-chinese_punctuation = "，、。；：？！“”‘’（）【】《》"
+chinese_punctuation = "，、。；：？！""''（）【】《》"
+
+
+@dataclass
+class PairMatch:
+    """
+    表示一对闭合标记的匹配信息
+
+    :param marker: 标记符号，如 "**"、"()"、"[]" 等
+    :param open_start: 开始标记的起始位置（索引）
+    :param open_end: 开始标记的结束位置（索引，不包含）
+    :param close_start: 结束标记的起始位置（索引）
+    :param close_end: 结束标记的结束位置（索引，不包含）
+    """
+    marker: str
+    open_start: int
+    open_end: int
+    close_start: int
+    close_end: int
+
+
+def find_pair_markers(line: str, marker: str) -> list[PairMatch]:
+    """
+    在字符串中查找成对的标记
+
+    对于相同的开始和结束标记（如 **），会将找到的标记按顺序两两配对。
+    例如：第1个和第2个配对，第3个和第4个配对，以此类推。
+
+    :param line: 要搜索的字符串
+    :param marker: 要匹配的标记，如 "**"
+
+    :return: 匹配到的成对标记列表
+    """
+    matches = []
+    positions = []
+
+    # 找到所有标记的位置
+    start = 0
+    while True:
+        pos = line.find(marker, start)
+        if pos == -1:
+            break
+        positions.append(pos)
+        start = pos + len(marker)
+
+    # 将位置两两配对（第1个和第2个，第3个和第4个，...）
+    for i in range(0, len(positions) - 1, 2):
+        open_pos = positions[i]
+        close_pos = positions[i + 1]
+        matches.append(
+            PairMatch(
+                marker=marker,
+                open_start=open_pos,
+                open_end=open_pos + len(marker),
+                close_start=close_pos,
+                close_end=close_pos + len(marker),
+            )
+        )
+
+    return matches
+
+
+def remove_spaces_around_paired_markers(line: str, matches: list[PairMatch]) -> str:
+    """
+    移除成对标记内侧的空格
+
+    对于每一对标记：
+    - 移除开始标记后面的空格（内侧）
+    - 移除结束标记前面的空格（内侧）
+
+    从后往前处理每一对标记，避免修改字符串后索引变化的问题。
+    对于每一对，先处理结束标记前的空格，再处理开始标记后的空格。
+
+    :param line: 要处理的字符串
+    :param matches: 成对标记的匹配列表
+
+    :return: 处理后的字符串
+    """
+    if not matches:
+        return line
+
+    # 按开始位置从后往前排序，确保修改不影响前面的索引
+    sorted_matches = sorted(matches, key=lambda m: m.open_start, reverse=True)
+
+    result = line
+    for match in sorted_matches:
+        # 先处理结束标记前面的空格
+        space_count = 0
+        pos = match.close_start
+        while pos - space_count - 1 >= 0 and result[pos - space_count - 1] == " ":
+            space_count += 1
+        if space_count > 0:
+            result = result[: pos - space_count] + result[pos:]
+
+        # 再处理开始标记后面的空格
+        # 注意：删除close前的空格不影响open_end的位置（因为在前面）
+        space_count = 0
+        pos = match.open_end
+        while pos + space_count < len(result) and result[pos + space_count] == " ":
+            space_count += 1
+        if space_count > 0:
+            result = result[:pos] + result[pos + space_count :]
+
+    return result
+
+
+def post_process_paired_markers(line: str) -> str:
+    """
+    后处理：移除成对标记内侧的多余空格
+
+    目前支持的标记：
+    - ** (Markdown粗体)
+
+    这个函数会按顺序处理多个标记类型，每次处理完一个标记类型后，
+    将修改后的字符串作为下一个标记类型的输入。
+
+    :param line: 要处理的字符串
+
+    :return: 处理后的字符串
+    """
+    # 可以扩展到其他标记，如 "()", "[]", "<>" 等
+    markers_to_process = ["**"]
+
+    for marker in markers_to_process:
+        matches = find_pair_markers(line, marker)
+        line = remove_spaces_around_paired_markers(line, matches)
+
+    return line
 
 
 def _process_last_special_char(line: str, tokens: list[str], char: str):
@@ -217,6 +345,8 @@ def handle_everything(line: str) -> str:
     line = handle_you_shuang_yin_hao(line)
     # Add spaces between Chinese and English after all punctuation conversions
     line = handle_space_between_chinese_and_english(line)
+    # Post-process to remove spaces inside paired markers
+    line = post_process_paired_markers(line)
     return line
 
 
