@@ -15,6 +15,29 @@ x.y.z (Backlog)
 **Miscellaneous**
 
 
+0.1.8 (2025-10-23)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+**Features and Improvements**
+
+- Add ``handle_consecutive_punctuation`` function to handle 2-3 consecutive identical Chinese punctuation marks (e.g., ``。。。`` → ``...``, ``？？？`` → ``???``)
+- Add ``find_pair_markers`` and ``remove_spaces_around_paired_markers`` functions to handle spaces inside paired markers like ``**``
+- Add ``post_process_paired_markers`` function to remove unwanted spaces inside paired markers after all other processing
+
+**Bugfixes**
+
+- Fix quote spacing bug in ``handle_space_between_chinese_and_english``: ASCII quotes followed by Chinese characters now correctly add space (e.g., ``"Python"是`` → ``"Python" 是``)
+- Fix opening/closing quote detection using quote state tracking to properly distinguish between opening quotes (e.g., ``从"A"``) and closing quotes (e.g., ``"你好"``)
+- Fix space handling around ASCII punctuation and Chinese characters with special rules for closing punctuation (``,.:;?!``) and opening punctuation (``([{"'``)
+- Add handling for Chinese colon inside paired markers: ``**参考资源：**`` now correctly converts to ``**参考资源:**`` without extra space before ``:``
+
+**Test Updates**
+
+- Enable and fix test case for consecutive exclamation marks: ``连续感叹！！！下一句`` → ``连续感叹!!! 下一句``
+- Add test cases for consecutive periods and question marks
+- Fix test case expectation for ``从"A"到"B"只需1天。`` to include proper spacing around numbers and Chinese characters
+- Add test case for mixed Chinese punctuation with paired markers: ``注意：**这很着急，也很重要。**``
+
+
 0.1.7 (2025-10-21)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 **Bugfixes**
