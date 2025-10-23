@@ -288,6 +288,43 @@ def handle_you_shuang_yin_hao(line: str) -> str:
     return "".join(new_tokens).strip()
 
 
+def handle_consecutive_punctuation(line: str) -> str:
+    """
+    处理连续的2-3个相同的中文标点符号
+
+    连续的中文标点应该被视为一个整体，直接转换为对应数量的英文标点，不在中间添加空格。
+    例如：
+    - 。。。 → ...
+    - ？？？ → ???
+    - ！！！ → !!!
+
+    :param line: 要处理的字符串
+    :return: 处理后的字符串
+    """
+    import re
+
+    # 定义中文标点到英文标点的映射
+    punctuation_map = {
+        '。': '.',
+        '？': '?',
+        '！': '!',
+    }
+
+    # 处理每种标点的连续情况（2-3个）
+    for chinese_punct, english_punct in punctuation_map.items():
+        # 匹配2-3个连续的相同标点
+        pattern = f'{re.escape(chinese_punct)}{{2,3}}'
+
+        def replace_func(match):
+            # 将连续的中文标点替换为相同数量的英文标点
+            count = len(match.group())
+            return english_punct * count
+
+        line = re.sub(pattern, replace_func, line)
+
+    return line
+
+
 def handle_space_between_chinese_and_english(line: str) -> str:
     """
     Add space between Chinese and English characters/numbers/punctuation.
@@ -393,6 +430,10 @@ def handle_space_between_chinese_and_english(line: str) -> str:
 
 
 def handle_everything(line: str) -> str:
+    # First, handle consecutive punctuation (2-3 of the same type)
+    # This must be done before individual punctuation handling
+    line = handle_consecutive_punctuation(line)
+    # Then handle individual punctuation marks
     line = handle_dou_hao(line)
     line = handle_dun_hao(line)
     line = handle_ju_hao(line)
