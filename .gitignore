@@ -2,6 +2,7 @@
 esc_mini_tools_lib.egg-info/
 docs/source/**/index.md
 tmp/
+.claude/claude-code-messages.md
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
