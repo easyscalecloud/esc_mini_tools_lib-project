@@ -206,7 +206,7 @@ class TestRecord:
 
         assert record.url == url
         assert record.page_data == simple_page_data
-        assert record.md == "# Test Page\n\nTest"
+        assert record.md_value == "# Test Page\n\nTest"
         assert record.success is False
 
 

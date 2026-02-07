@@ -230,6 +230,8 @@ def get_body_in_atlas_doc_format_from_page_data(
 class Record(BaseModel):
     url: str = Field()
     page_data: dict[str, T.Any] = Field()
+    xml: str | None = Field(default=None)
+    md: str | None = Field(default=None)
     success: bool = Field(default=False)
 
     @cached_property
@@ -253,7 +255,7 @@ class Record(BaseModel):
         return f"{self.site_url}/wiki{self.get_page_response.links.webui}"
 
     @cached_property
-    def md(self) -> str:
+    def md_value(self) -> str:
         node_doc = NodeDoc.from_dict(
             dct=self.atlas_doc_data,
         )
@@ -267,7 +269,7 @@ class Record(BaseModel):
         return md.rstrip()
 
     @cached_property
-    def xml(self) -> str:
+    def xml_value(self) -> str:
         TAB = " " * 2
         lines = list()
         lines.append("<document>")
@@ -283,7 +285,7 @@ class Record(BaseModel):
 
         field = ConfluencePageFieldEnum.markdown_content.value
         lines.append(f"{TAB}<{field}>")
-        lines.append(self.md)
+        lines.append(self.md_value)
         lines.append(f"{TAB}</{field}>")
 
         lines.append("</document>")
@@ -299,6 +301,8 @@ class ConfluencePageExportInput(BaseModel):
         docs = list()
         for record in self.records:
             try:
+                record.xml = record.xml_value
+                record.md = record.md_value
                 docs.append(record.xml)
                 record.success = True
             except Exception as e:
