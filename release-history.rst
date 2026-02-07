@@ -15,6 +15,29 @@ x.y.z (Backlog)
 **Miscellaneous**
 
 
+0.1.9 (2026-02-06)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+**Features and Improvements**
+
+- Refactor ``confluence_export`` tool to generate Markdown and XML from ``atlas_doc`` format using the ``atlas_doc_parser`` library.
+- Add new ``Record`` model that wraps page data with ``GetPageResponse`` and ``NodeDoc`` to derive:
+    - ``title``: Page title from the API response
+    - ``atlas_doc_data``: Parsed atlas_doc format data
+    - ``webui_url``: Web UI URL for the page
+    - ``md``: Markdown content with title header
+    - ``xml``: XML output using ``ConfluencePageFieldEnum`` for structured document export
+- Update ``ConfluencePageExportInput`` to use ``record.xml`` for export output instead of the old ``ConfluencePage`` helper.
+
+**Dependencies**
+
+- Upgrade ``atlas_doc_parser`` from 0.1.x to 1.0.1 (major version upgrade).
+- Replace ``docpack`` with ``docpack-confluence>=0.1.3`` for Confluence-specific document packaging.
+
+**Test Updates**
+
+- Update tests to include ``_links.webui`` field in mock data and assert the generated markdown content.
+
+
 0.1.8 (2025-10-23)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 **Features and Improvements**
