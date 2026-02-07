@@ -1,10 +1,13 @@
 {
   "permissions": {
     "allow": [
+      "Read(========== Read Section ==========)",
+      "Read(========== Write Section ==========)",
       "Write(.claude/**/*.md)",
       "Write(./**/*.rst)",
       "Write(esc_mini_tools_lib/**/*.py)",
       "Write(tests/**/*.py)",
+      "Read(========== Bash Section ==========)",
       "Bash(~/.pyenv/shims/python bin/*.py)",
       "Bash(.venv/bin/python debug/**/*.py)",
       "Bash(.venv/bin/python scripts/**/*.py)",
@@ -12,5 +15,19 @@
       "Bash(.venv/bin/python tests/**/*.py)",
       "Bash(make *)"
     ]
+  },
+  "enabledPlugins": {
+    "tell-me-a-joke@sanhe-claude-code-plugins": true,
+    "claude-code-plugin-creator@sanhe-claude-code-plugins": true,
+    "sanhe-py-best-practices@sanhe-claude-code-plugins": true
+  },
+  "extraKnownMarketplaces": {
+    "sanhe-claude-code-plugins": {
+      "source": {
+        "source": "git",
+        "url": "https://github.com/MacHu-GWU/sanhe-claude-code-plugins.git",
+        "ref": "0.1.3"
+      }
+    }
   }
 }

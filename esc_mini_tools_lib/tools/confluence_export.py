@@ -15,7 +15,7 @@ from functools import cached_property
 from urllib.parse import urlparse, parse_qs
 
 from pydantic import BaseModel, Field
-from docpack.api import ConfluencePage
+from docpack_confluence.api import SpaceExportConfig, ExportSpec
 
 
 # ------------------------------------------------------------------------------
@@ -23,14 +23,13 @@ from docpack.api import ConfluencePage
 # ------------------------------------------------------------------------------
 class ConfluenceUrlPattern(str, Enum):
     """Enum representing different Confluence URL patterns."""
-
+    # fmt: off
     STANDARD_PAGE = "standard_page"  # /spaces/{space}/pages/{id}/{title}
-    PAGE_WITH_QUERY = (
-        "page_with_query"  # /spaces/{space}/pages/{id}/{title}?param=value
-    )
+    PAGE_WITH_QUERY = "page_with_query"  # /spaces/{space}/pages/{id}/{title}?param=value
     EDIT_PAGE = "edit_page"  # /spaces/{space}/pages/edit-v2/{id}
     DRAFT_PAGE = "draft_page"  # /pages/resumedraft.action?draftId={id}
     UNKNOWN = "unknown"
+    # fmt: on
 
 
 def identify_url_pattern(url: str) -> ConfluenceUrlPattern:

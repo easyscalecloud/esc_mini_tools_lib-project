@@ -52,8 +52,8 @@ dependencies = [
     "s3pathlib>=2.3.6,<3.0.0", # A pathlib-style object-oriented wrapper for Amazon S3
     "pydantic>=2.12.0,<3.0.0",
     # --- Tool
-    "atlas_doc_parser>=0.1.2,<1.0.0", # Parse atlassian document format
-    "docpack>=0.1.6,<1.0.0", # Document package for Python
+    "atlas_doc_parser>=1.0.1,<2.0.0", # Parse atlassian document format
+    "docpack-confluence>=0.1.3,<1.0.0", # Document package for Python
     "tiktoken>=0.12.0,<1.0.0", # Tokenizer for LLMs
 ]
 
