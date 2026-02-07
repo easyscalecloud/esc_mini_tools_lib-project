@@ -15,6 +15,16 @@ x.y.z (Backlog)
 **Miscellaneous**
 
 
+0.1.10 (2026-02-06)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+**Features and Improvements**
+
+- Add ``md`` and ``xml`` as regular Pydantic fields on ``Record`` model so that frontend applications can assign values to them (cached properties do not support assignment).
+- Rename ``md`` and ``xml`` cached properties to ``md_value`` and ``xml_value`` to avoid name conflicts with the new Pydantic fields.
+- Update ``ConfluencePageExportInput.main`` to assign ``record.md = record.md_value`` and ``record.xml = record.xml_value`` during export processing.
+- Add docstrings to ``Record``, ``ConfluencePageExportInput``, ``ConfluencePageExportOutput``, and all their methods.
+
+
 0.1.9 (2026-02-06)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 **Features and Improvements**

@@ -228,6 +228,37 @@ def get_body_in_atlas_doc_format_from_page_data(
 
 
 class Record(BaseModel):
+    """
+    A data model representing a single Confluence page record.
+
+    This model wraps the raw page data from the Confluence REST API and provides
+    derived properties for accessing the page title, atlas doc data, web UI URL,
+    markdown content, and structured XML output. The ``md`` and ``xml`` fields
+    are regular Pydantic fields (not cached properties) so that they can be
+    assigned by the caller — this is required because frontend applications
+    depend on the type system and need assignable fields.
+
+    :param url: The original Confluence page URL.
+    :param page_data: The raw page data dictionary from the Confluence REST API.
+    :param xml: The structured XML output of the page content. Populated by
+        :meth:`ConfluencePageExportInput.main`.
+    :param md: The markdown representation of the page content. Populated by
+        :meth:`ConfluencePageExportInput.main`.
+    :param success: Whether the export was successful. Set to ``True`` by
+        :meth:`ConfluencePageExportInput.main` after successful processing.
+
+    .. versionchanged:: 0.1.9
+
+        Refactored to use ``GetPageResponse`` and ``NodeDoc`` for deriving
+        title, atlas doc data, web UI URL, markdown, and XML content.
+
+    .. versionchanged:: 0.1.10
+
+        Renamed ``md`` and ``xml`` cached properties to ``md_value`` and
+        ``xml_value``. Added ``md`` and ``xml`` as regular Pydantic fields
+        so they can be assigned by the caller.
+    """
+
     url: str = Field()
     page_data: dict[str, T.Any] = Field()
     xml: str | None = Field(default=None)
@@ -236,26 +267,65 @@ class Record(BaseModel):
 
     @cached_property
     def site_url(self) -> str:
+        """
+        Derive the site base URL from the page URL.
+
+        :return: The base URL (scheme + netloc), e.g. ``https://domain.atlassian.net``.
+        """
         return "/".join(self.url.split("/")[:3])
 
     @cached_property
     def get_page_response(self) -> GetPageResponse:
+        """
+        Parse the raw page data into a ``GetPageResponse`` object.
+
+        :return: A ``GetPageResponse`` instance wrapping the raw page data.
+        """
         return GetPageResponse(_raw_data=self.page_data)
 
     @cached_property
     def title(self) -> str:
+        """
+        Get the page title from the API response.
+
+        :return: The page title string.
+        """
         return self.get_page_response.title
 
     @cached_property
     def atlas_doc_data(self) -> dict[str, T.Any]:
+        """
+        Parse the atlas_doc_format body from the API response.
+
+        :return: A dictionary representing the atlas doc format content.
+        """
         return json.loads(self.get_page_response.body.atlas_doc_format.value)
 
     @cached_property
     def webui_url(self) -> str:
+        """
+        Construct the full web UI URL for the Confluence page.
+
+        :return: The web UI URL, e.g.
+            ``https://domain.atlassian.net/wiki/spaces/SPACE/pages/123/Title``.
+        """
         return f"{self.site_url}/wiki{self.get_page_response.links.webui}"
 
     @cached_property
     def md_value(self) -> str:
+        """
+        Generate the markdown content from the atlas doc data.
+
+        Converts the atlas doc format to markdown using ``NodeDoc`` and
+        prepends a level-1 heading with the page title.
+
+        :return: The markdown string with title header.
+
+        .. versionchanged:: 0.1.10
+
+            Renamed from ``md`` to ``md_value`` to avoid conflict with the
+            ``md`` Pydantic field.
+        """
         node_doc = NodeDoc.from_dict(
             dct=self.atlas_doc_data,
         )
@@ -270,6 +340,20 @@ class Record(BaseModel):
 
     @cached_property
     def xml_value(self) -> str:
+        """
+        Generate the structured XML output from the page content.
+
+        Produces an XML document with fields defined by
+        ``ConfluencePageFieldEnum``, including source type, Confluence URL,
+        title, and markdown content.
+
+        :return: The XML string representing the page content.
+
+        .. versionchanged:: 0.1.10
+
+            Renamed from ``xml`` to ``xml_value`` to avoid conflict with the
+            ``xml`` Pydantic field.
+        """
         TAB = " " * 2
         lines = list()
         lines.append("<document>")
@@ -294,10 +378,43 @@ class Record(BaseModel):
 
 
 class ConfluencePageExportInput(BaseModel):
+    """
+    Input model for exporting Confluence page content.
+
+    Takes a list of :class:`Record` objects and processes each one to generate
+    markdown and XML representations. After processing, each record's ``md``,
+    ``xml``, and ``success`` fields are populated.
+
+    :param records: A list of :class:`Record` objects to export.
+    :param wanted_fields: An optional list of field names to include in the
+        export output. If ``None``, all fields are included.
+
+    .. versionchanged:: 0.1.9
+
+        Updated to use ``Record.xml`` for export output instead of the old
+        ``ConfluencePage`` helper.
+
+    .. versionchanged:: 0.1.10
+
+        Updated to assign ``record.md`` and ``record.xml`` from
+        ``record.md_value`` and ``record.xml_value`` respectively.
+    """
+
     records: list[Record] = Field()
     wanted_fields: list[str] | None = Field(default=None)
 
-    def main(self):
+    def main(self) -> "ConfluencePageExportOutput":
+        """
+        Export all records to structured XML and markdown.
+
+        Iterates over each :class:`Record`, computes the XML and markdown
+        content via ``xml_value`` and ``md_value``, assigns them to the
+        record's ``xml`` and ``md`` fields, and marks the record as successful.
+        If an error occurs during processing, the record is skipped.
+
+        :return: A :class:`ConfluencePageExportOutput` containing the
+            concatenated XML text of all successfully exported records.
+        """
         docs = list()
         for record in self.records:
             try:
@@ -315,5 +432,20 @@ class ConfluencePageExportInput(BaseModel):
 
 
 class ConfluencePageExportOutput(BaseModel):
+    """
+    Output model for Confluence page export.
+
+    Contains the original input and the concatenated XML text of all
+    successfully exported records.
+
+    :param input: The original :class:`ConfluencePageExportInput`.
+    :param text: The concatenated XML output of all successfully processed
+        records.
+
+    .. versionchanged:: 0.1.9
+
+        Updated to contain XML output generated from ``Record.xml``.
+    """
+
     input: ConfluencePageExportInput = Field()
     text: str = Field()
