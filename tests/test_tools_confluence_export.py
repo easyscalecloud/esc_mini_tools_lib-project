@@ -194,6 +194,9 @@ class TestRecord:
                     "value": '{"type":"doc","content":[{"type":"paragraph","content":[{"text":"Test","type":"text"}]}]}'
                 }
             },
+            "_links": {
+                "webui": "/spaces/TEST/pages/123/Test"
+            }
         }
 
         record = Record(
@@ -203,7 +206,7 @@ class TestRecord:
 
         assert record.url == url
         assert record.page_data == simple_page_data
-        assert record.xml is None
+        assert record.md == "# Test Page\n\nTest"
         assert record.success is False
 
 
@@ -220,6 +223,9 @@ class TestConfluencePageExportInput:
                     "value": '{"type":"doc","content":[{"type":"paragraph","content":[{"text":"This is test content.","type":"text"}]}]}'
                 }
             },
+            "_links": {
+                "webui": "/spaces/TEST/pages/123/Test"
+            }
         }
 
         record = Record(url=url, page_data=simple_page_data)
@@ -245,6 +251,9 @@ class TestConfluencePageExportInput:
                         "value": f'{{"type":"doc","content":[{{"type":"paragraph","content":[{{"text":"Content {i}","type":"text"}}]}}]}}'
                     }
                 },
+                "_links": {
+                    "webui": "/spaces/TEST/pages/123/Test"
+                }
             }
             records.append(Record(url=url, page_data=page_data))
 

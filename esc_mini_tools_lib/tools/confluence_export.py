@@ -15,7 +15,9 @@ from functools import cached_property
 from urllib.parse import urlparse, parse_qs
 
 from pydantic import BaseModel, Field
-from docpack_confluence.api import SpaceExportConfig, ExportSpec
+from atlas_doc_parser.api import NodeDoc
+from docpack_confluence.api import Page, Entity, ConfluencePageFieldEnum
+from sanhe_confluence_sdk.methods.page.get_page import GetPageResponse
 
 
 # ------------------------------------------------------------------------------
@@ -23,6 +25,7 @@ from docpack_confluence.api import SpaceExportConfig, ExportSpec
 # ------------------------------------------------------------------------------
 class ConfluenceUrlPattern(str, Enum):
     """Enum representing different Confluence URL patterns."""
+
     # fmt: off
     STANDARD_PAGE = "standard_page"  # /spaces/{space}/pages/{id}/{title}
     PAGE_WITH_QUERY = "page_with_query"  # /spaces/{space}/pages/{id}/{title}?param=value
@@ -227,19 +230,65 @@ def get_body_in_atlas_doc_format_from_page_data(
 class Record(BaseModel):
     url: str = Field()
     page_data: dict[str, T.Any] = Field()
-    xml: str | None = Field(default=None)
-    md: str | None = Field(default=None)
     success: bool = Field(default=False)
 
     @cached_property
-    def conf_page(self) -> "ConfluencePage":
-        return ConfluencePage(
-            page_data=self.page_data,
-            site_url="",
-            id_path="",
-            position_path="",
-            breadcrumb_path="",
+    def site_url(self) -> str:
+        return "/".join(self.url.split("/")[:3])
+
+    @cached_property
+    def get_page_response(self) -> GetPageResponse:
+        return GetPageResponse(_raw_data=self.page_data)
+
+    @cached_property
+    def title(self) -> str:
+        return self.get_page_response.title
+
+    @cached_property
+    def atlas_doc_data(self) -> dict[str, T.Any]:
+        return json.loads(self.get_page_response.body.atlas_doc_format.value)
+
+    @cached_property
+    def webui_url(self) -> str:
+        return f"{self.site_url}/wiki{self.get_page_response.links.webui}"
+
+    @cached_property
+    def md(self) -> str:
+        node_doc = NodeDoc.from_dict(
+            dct=self.atlas_doc_data,
         )
+        md = node_doc.to_markdown(ignore_error=True)
+        lines = [
+            f"# {self.title}",
+            "",
+        ]
+        lines.extend(md.splitlines())
+        md = "\n".join(lines)
+        return md.rstrip()
+
+    @cached_property
+    def xml(self) -> str:
+        TAB = " " * 2
+        lines = list()
+        lines.append("<document>")
+
+        field = ConfluencePageFieldEnum.source_type.value
+        lines.append(f"{TAB}<{field}>Confluence Page</{field}>")
+
+        field = ConfluencePageFieldEnum.confluence_url.value
+        lines.append(f"{TAB}<{field}>{self.webui_url}</{field}>")
+
+        field = ConfluencePageFieldEnum.title.value
+        lines.append(f"{TAB}<{field}>{self.title}</{field}>")
+
+        field = ConfluencePageFieldEnum.markdown_content.value
+        lines.append(f"{TAB}<{field}>")
+        lines.append(self.md)
+        lines.append(f"{TAB}</{field}>")
+
+        lines.append("</document>")
+
+        return "\n".join(lines)
 
 
 class ConfluencePageExportInput(BaseModel):
@@ -250,11 +299,7 @@ class ConfluencePageExportInput(BaseModel):
         docs = list()
         for record in self.records:
             try:
-                xml = record.conf_page.to_xml()
-                md = record.conf_page.markdown
-                docs.append(xml)
-                record.xml = xml
-                record.md = md
+                docs.append(record.xml)
                 record.success = True
             except Exception as e:
                 pass
