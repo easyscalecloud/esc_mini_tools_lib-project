@@ -220,8 +220,16 @@ def handle_zuo_kuo_hao(line: str) -> str:
     """
     中文左括号 （ → 英文左括号 (
     并在左括号前添加一个空格
+
+    .. note::
+
+        不能过滤掉 split 产生的空 token. 空 token 携带了「这里是行首」这样的
+        结构信息, 过滤掉会导致 join 少一个分隔符, 左括号直接消失.
+        例如 "（内容）" split 后是 ["", "内容）"], 过滤后只剩一个 token,
+        join 不产生任何分隔符, 左括号就丢了.
+        行首多出来的空格由最后的 strip() 负责清理.
     """
-    tokens = [token.strip() for token in line.split("（") if token.strip()]
+    tokens = [token.strip() for token in line.split("（")]
     return " (".join(tokens).strip()
 
 
@@ -229,25 +237,27 @@ def handle_you_kuo_hao(line: str) -> str:
     """
     中文右括号 ） → 英文右括号 )
     并在右括号后添加一个空格. 但如果右括号之后是一个特殊标点符号, 则不添加空格.
+
+    .. note::
+
+        同 :func:`handle_zuo_kuo_hao`, 不过滤空 token.
+        行尾的 ） 会产生一个末尾空 token, 循环自然会为它补上 ")",
+        因此不再需要单独判断「行尾是不是 ）」.
     """
-    tokens = [token.strip() for token in line.split("）") if token.strip()]
+    tokens = [token.strip() for token in line.split("）")]
     # print(tokens)  # for debug only
     new_tokens = list()
     for ith, token in enumerate(tokens):
         new_tokens.append(token)
-        try:
-            next_token = tokens[ith + 1]
-            if next_token[0] in ",.:;?!":
-                new_tokens.append(")")
-            else:
-                new_tokens.append(") ")
-        except IndexError:
+        if ith + 1 >= len(tokens):
             break
-    try:
-        if line.rstrip()[-1] == "）":
+        next_token = tokens[ith + 1]
+        # next_token 可能是空字符串 (连续的 ） 或行尾的 ）), 此时按「后面没有
+        # 紧跟标点」处理, 补 ") ", 多出的尾部空格由 strip() 清理
+        if next_token and next_token[0] in ",.:;?!":
             new_tokens.append(")")
-    except IndexError:
-        pass
+        else:
+            new_tokens.append(") ")
     # print(new_tokens)  # for debug only
     return "".join(new_tokens).strip()
 
@@ -256,34 +266,36 @@ def handle_zuo_shuang_yin_hao(line: str) -> str:
     """
     中文左双引号 “ → 英文左双引号 "
     并在左双引号前添加一个空格
+
+    .. note::
+
+        同 :func:`handle_zuo_kuo_hao`, 不过滤空 token, 否则行首的 “ 会丢失.
     """
-    tokens = [token.strip() for token in line.split("“") if token.strip()]
+    tokens = [token.strip() for token in line.split("“")]
     return ' "'.join(tokens).strip()
 
 
 def handle_you_shuang_yin_hao(line: str) -> str:
     """
     中文右双引号 ” → 英文右双引号 "
-    并在右双引号后添加一个空格. 但如果右双号之后是一个特殊标点符号, 则不添加空格.
+    并在右双号之后是一个特殊标点符号, 则不添加空格.
+
+    .. note::
+
+        同 :func:`handle_you_kuo_hao`, 不过滤空 token.
     """
-    tokens = [token.strip() for token in line.split("”") if token.strip()]
+    tokens = [token.strip() for token in line.split("”")]
     # print(tokens)  # for debug only
     new_tokens = list()
     for ith, token in enumerate(tokens):
         new_tokens.append(token)
-        try:
-            next_token = tokens[ith + 1]
-            if next_token[0] in ",.:;?!)":
-                new_tokens.append('"')
-            else:
-                new_tokens.append('" ')
-        except IndexError:
+        if ith + 1 >= len(tokens):
             break
-    try:
-        if line.rstrip()[-1] == "”":
+        next_token = tokens[ith + 1]
+        if next_token and next_token[0] in ",.:;?!)":
             new_tokens.append('"')
-    except IndexError:
-        pass
+        else:
+            new_tokens.append('" ')
     # print(new_tokens)  # for debug only
     return "".join(new_tokens).strip()
 
@@ -429,7 +441,36 @@ def handle_space_between_chinese_and_english(line: str) -> str:
     return "".join(result)
 
 
+def split_indent(line: str) -> tuple[str, str]:
+    """
+    将一行拆分为「行首缩进」和「剩余内容」两部分
+
+    各个 handler 内部会对 token 做 strip(), 会把行首缩进一起吞掉.
+    对于 Markdown / reStructuredText 的代码块 (以及列表的续行) 来说,
+    缩进是有语义的, 不能被破坏. 所以在处理前先把缩进摘出来, 处理完再拼回去.
+
+    :param line: 要拆分的字符串
+
+    :return: (缩进, 去掉行首空白后的内容) 元组
+
+    .. code-block:: python
+
+        >>> split_indent("    hello")
+        ('    ', 'hello')
+        >>> split_indent("\\thello")
+        ('\\t', 'hello')
+    """
+    content = line.lstrip()
+    indent = line[: len(line) - len(content)]
+    return indent, content
+
+
 def handle_everything(line: str) -> str:
+    # 先把行首缩进摘出来, 避免后续 handler 的 strip() 把它吞掉
+    indent, line = split_indent(line)
+    # 空行 (或纯空白行) 直接返回空字符串, 不保留无意义的尾部空白
+    if not line:
+        return ""
     # First, handle consecutive punctuation (2-3 of the same type)
     # This must be done before individual punctuation handling
     line = handle_consecutive_punctuation(line)
@@ -449,7 +490,8 @@ def handle_everything(line: str) -> str:
     line = handle_space_between_chinese_and_english(line)
     # Post-process to remove spaces inside paired markers
     line = post_process_paired_markers(line)
-    return line
+    # 最后把行首缩进拼回去
+    return indent + line
 
 
 def process(text: str) -> str:

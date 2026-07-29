@@ -15,6 +15,30 @@ x.y.z (Backlog)
 **Miscellaneous**
 
 
+0.1.11 (2026-07-28)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+**Bugfixes**
+
+- Fix ``chinese_to_english_punctuation`` stripping the leading indentation of every line, which corrupted indented code blocks in Markdown and reStructuredText documents. Indentation (spaces and tabs) is now preserved verbatim. Trailing whitespace is still stripped, and whitespace-only lines still collapse to empty lines.
+- Fix ``chinese_to_english_punctuation`` silently dropping a full-width opening bracket ``（`` or opening quote ``“`` that appears at the start of a line: ``（内容）`` produced ``内容)`` instead of ``(内容)``, and ``“引用内容”`` produced ``引用内容 "`` instead of ``"引用内容"``. Empty tokens produced by ``str.split`` are no longer filtered out, because they carry the line-boundary information that the join step depends on.
+- Fix ``handle_you_kuo_hao`` and ``handle_you_shuang_yin_hao`` silently truncating the remainder of a line when a closing ``）`` or ``”`` was followed by an empty token, by replacing the ``try``/``except IndexError`` bounds check with an explicit index comparison.
+
+**Minor Improvements**
+
+- Add ``split_indent`` helper to ``chinese_to_english_punctuation`` that separates a line's leading whitespace from its content.
+- Drop the now-redundant end-of-line special case in ``handle_you_kuo_hao`` and ``handle_you_shuang_yin_hao``; a trailing ``）`` or ``”`` is handled by the main loop.
+
+**Test Updates**
+
+- Add test cases for indentation preservation, Markdown and reStructuredText code blocks, tab indentation, and whitespace-only lines.
+- Enable the four previously commented-out bracket test cases; three of them encoded the buggy leading-space output and have been corrected.
+- Add test coverage for full-width quotes ``“”``, which previously had none because every existing quote test case used ASCII quotes.
+
+**Miscellaneous**
+
+- Migrate the project toolchain from poetry to `mise <https://mise.jdx.dev/>`_ and `uv <https://docs.astral.sh/uv/>`_. ``poetry.lock`` is replaced by ``uv.lock``, and development tasks now run through ``mise run``.
+
+
 0.1.10 (2026-02-06)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 **Features and Improvements**
