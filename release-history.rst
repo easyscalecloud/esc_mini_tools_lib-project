@@ -15,6 +15,22 @@ x.y.z (Backlog)
 **Miscellaneous**
 
 
+0.1.12 (2026-07-29)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+**Minor Improvements**
+
+- Extract the ``chinese_to_english_punctuation`` implementation into the standalone `chinese-to-english-punctuation <https://pypi.org/project/chinese-to-english-punctuation/>`_ package. ``esc_mini_tools_lib.tools.chinese_to_english_punctuation`` is now a thin command-pattern wrapper around ``chinese_to_english_punctuation.api.process``; behavior is unchanged (verified by differential testing of the old and new implementations over the previous test suite and the project's own documents).
+- Add ``chinese-to-english-punctuation>=0.1.1,<1.0.0`` as a core dependency.
+
+**Test Updates**
+
+- Replace the punctuation conversion test cases in ``test_tools_chinese_to_english_punctuation.py`` with a single wrapper test; the conversion rules are now covered by the upstream package's own test suite.
+
+**Miscellaneous**
+
+- Align ``esc_mini_tools_lib/_version.py`` with the version in ``pyproject.toml``; it was left at ``0.1.10``.
+
+
 0.1.11 (2026-07-28)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 **Bugfixes**

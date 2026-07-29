@@ -363,6 +363,15 @@ wheels = [
 ]
 
 [[package]]
+name = "chinese-to-english-punctuation"
+version = "0.1.1"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/63/c0/8c8d14f926ce609661d0ef241d650d4659452d103a4c55c173e0675b514d/chinese_to_english_punctuation-0.1.1.tar.gz", hash = "sha256:3db014ca1fca057c8adcc79010697989910f240bcf364daf75fbb8b06e483fab", size = 20374, upload-time = "2026-07-29T04:29:23.685Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/65/38/a7bf3dbdfd6c79edd26115fc487137c9fad5a0f464cabbe17993826aed06/chinese_to_english_punctuation-0.1.1-py3-none-any.whl", hash = "sha256:a0214f2cc2a99d5d078d17ca8d71a1be9a74e8b47ffa25e5fe6c7feb070820d8", size = 16206, upload-time = "2026-07-29T04:29:22.573Z" },
+]
+
+[[package]]
 name = "colorama"
 version = "0.4.6"
 source = { registry = "https://pypi.org/simple" }
@@ -599,13 +608,14 @@ wheels = [
 
 [[package]]
 name = "esc-mini-tools-lib"
-version = "0.1.11"
+version = "0.1.12"
 source = { editable = "." }
 dependencies = [
     { name = "atlas-doc-parser" },
     { name = "boltons" },
     { name = "boto-session-manager" },
     { name = "boto3" },
+    { name = "chinese-to-english-punctuation" },
     { name = "docpack-confluence" },
     { name = "func-args" },
     { name = "pydantic" },
@@ -648,6 +658,7 @@ requires-dist = [
     { name = "boltons", specifier = ">=25.0.0,<26.0.0" },
     { name = "boto-session-manager", specifier = ">=1.8.1,<2.0.0" },
     { name = "boto3", specifier = ">=1.42.97,<2.0.0" },
+    { name = "chinese-to-english-punctuation", specifier = ">=0.1.1,<1.0.0" },
     { name = "docfly", marker = "extra == 'doc'", specifier = "==3.0.3" },
     { name = "docpack-confluence", specifier = ">=0.1.3,<1.0.0" },
     { name = "func-args", specifier = ">=1.0.2,<2.0.0" },
